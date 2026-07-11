@@ -4,7 +4,7 @@
 
 A free, single-file study tracker built for BCS and government bank job aspirants in Bangladesh. No installs, no accounts, no ads — just open it and start tracking.
 
-**[👉 Use it now (no download needed)](#)** ← 
+**[👉 Use it now (no download needed)](https://kowsar0x9.github.io/Phoenix-Tracker/)**
 
 ---
 
@@ -33,8 +33,62 @@ Open the [live link](#) in any browser (phone or desktop). That's it.
 2. Double-click it, or open it in any browser
 3. Bookmark it — your data stays saved in that browser going forward
 
-##**Things to be strictly Remember!**
-> ⚠️ Since data is stored per-browser (not in the cloud), clearing your browser data or switching devices/browsers will reset your tracker. Use the backup/restore feature (in Settings) regularly to be safe.
+<details>
+<summary><strong>⚠️ IMPORTANT: Read this before using Phoenix Tracker | ব্যবহারের আগে অবশ্যই পড়ুন</strong></summary>
+
+---
+
+## 🇧🇩 বাংলা
+
+### আপনার ডাটা কোথায় সংরক্ষিত হয়?
+
+Phoenix Tracker-এর সমস্ত ডাটা **শুধুমাত্র আপনার বর্তমান ব্রাউজারের Local Storage-এ সংরক্ষিত থাকে।**
+
+এটি **Cloud Storage নয়**।
+
+তাই নিচের যেকোনো কাজ করলে আপনার ডাটা হারিয়ে যেতে পারে—
+
+- Browser Data / Cache Clear করলে
+- Browser Reinstall করলে
+- অন্য Browser ব্যবহার করলে
+- নতুন মোবাইল বা কম্পিউটারে Tracker খুললে
+- Factory Reset করলে
+
+### ✅ নিরাপদ থাকার উপায়
+
+- Settings থেকে নিয়মিত **Backup Export** করুন।
+- Backup ফাইল Google Drive, OneDrive বা অন্য নিরাপদ স্থানে সংরক্ষণ করুন।
+- নতুন ডিভাইসে ব্যবহার করার আগে Backup Import করুন।
+
+> **মনে রাখবেন:** Browser Storage ≠ Cloud Storage
+
+---
+
+## 🇬🇧 English
+
+### Where is my data stored?
+
+Phoenix Tracker stores all your data **only inside your current browser's Local Storage.**
+
+It does **NOT** use cloud storage.
+
+Your data may be lost if you:
+
+- Clear browser data or cache
+- Reinstall your browser
+- Switch to another browser
+- Open the tracker on another phone or computer
+- Factory reset your device
+
+### ✅ Stay Safe
+
+- Regularly **Export a Backup** from Settings.
+- Store the backup file somewhere safe (Google Drive, OneDrive, USB, etc.).
+- Import the backup whenever you move to another device.
+
+> **Remember:** Browser Storage ≠ Cloud Storage.
+
+</details>
 
 ## Who this is for
 
