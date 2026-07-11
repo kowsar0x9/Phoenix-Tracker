@@ -1,0 +1,2125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="page-title">Operation Phoenix</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #0d0f18;
+  --surface:  #141720;
+  --surface2: #1a1f30;
+  --border:   #1e2235;
+  --border2:  #2a2f4a;
+  --orange:   #f97316;
+  --orange-d: #7c2d12;
+  --orange-l: #fed7aa;
+  --muted:    #64748b;
+  --sub:      #94a3b8;
+  --text:     #e2e8f0;
+  --green:    #4ade80;
+  --yellow:   #fbbf24;
+  --red:      #f87171;
+  --indigo:   #818cf8;
+  --blue:     #38bdf8;
+  --alert-bg: #431407;
+  --alert-br: #9a3412;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  font-size: 15px;
+}
+
+/* ── SETUP ── */
+#setup {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 100vh; padding: 24px;
+}
+.setup-card {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 20px; padding: 40px 32px; text-align: center;
+  max-width: 400px; width: 100%;
+}
+.setup-flame { font-size: 52px; margin-bottom: 12px; }
+.setup-title { font-size: 28px; font-weight: 800; color: var(--orange); letter-spacing: -0.5px; margin-bottom: 8px; }
+.setup-sub { color: var(--sub); font-size: 14px; margin-bottom: 28px; line-height: 1.6; }
+.setup-section-title {
+  font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase;
+  letter-spacing: 0.09em; margin: 24px 0 12px; text-align: left;
+  border-top: 1px solid var(--border); padding-top: 20px;
+}
+.setup-section-title:first-of-type { border-top: none; padding-top: 0; }
+
+/* ── APP ── */
+#app { display: none; max-width: 640px; margin: 0 auto; }
+
+.header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px; background: var(--surface);
+  border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 10;
+}
+.logo { font-size: 18px; font-weight: 800; color: var(--orange); letter-spacing: -0.3px; }
+.header-right { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+.pill {
+  border-radius: 20px; padding: 3px 10px; font-size: 11px;
+  background: #1e293b; border: 1px solid #334155; color: var(--sub);
+}
+.pill-warn { background: var(--alert-bg); border-color: var(--alert-br); color: #fb923c; }
+.settings-btn {
+  background: none; border: 1px solid var(--border2); border-radius: 8px;
+  color: var(--muted); font-size: 13px; padding: 4px 10px; cursor: pointer;
+}
+.settings-btn:hover { border-color: var(--orange); color: var(--orange); }
+
+/* ── QUOTE BANNER ── */
+.quote-banner {
+  padding: 14px 16px; background: linear-gradient(135deg, #0f1221 0%, #141928 100%);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 12px;
+}
+.quote-icon { font-size: 20px; flex-shrink: 0; }
+.quote-text { font-size: 13px; color: var(--sub); line-height: 1.5; font-style: italic; }
+.quote-text strong { color: var(--orange-l); font-style: normal; }
+
+/* ── BANNER ── */
+.banner {
+  display: flex; align-items: center; justify-content: space-around;
+  padding: 14px 16px; background: #0f1221; border-bottom: 1px solid var(--border);
+}
+.b-stat { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.b-num { font-size: 22px; font-weight: 700; color: var(--orange); }
+.b-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+.b-div { width: 1px; height: 32px; background: var(--border); }
+
+/* ── TABS ── */
+.tabs {
+  display: flex; background: var(--surface);
+  border-bottom: 1px solid var(--border); overflow-x: auto;
+}
+.tab {
+  flex: 1; padding: 12px 8px; border: none; background: transparent;
+  color: var(--muted); font-size: 13px; cursor: pointer;
+  border-bottom: 2px solid transparent; white-space: nowrap; font-weight: 500;
+}
+.tab.active { color: var(--orange); border-bottom-color: var(--orange); }
+
+.content { padding: 14px 14px 80px; }
+
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 16px; margin-bottom: 12px;
+}
+.card-title {
+  font-size: 11px; font-weight: 700; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.09em; margin-bottom: 14px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.card-title-left { display: flex; align-items: center; gap: 8px; }
+
+/* ── ALERT ── */
+.alert {
+  background: var(--alert-bg); border: 1px solid var(--alert-br);
+  border-radius: 8px; padding: 10px 12px; margin-bottom: 12px;
+  font-size: 13px; color: var(--orange-l); line-height: 1.5;
+}
+
+/* ── TODAY ── */
+.today-row { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; }
+.big-num { font-size: 38px; font-weight: 800; color: var(--orange); line-height: 1; }
+.today-meta { font-size: 13px; color: var(--sub); }
+.gap-label { font-size: 12px; color: var(--yellow); margin-top: 4px; }
+.hit-label { font-size: 12px; color: var(--green); margin-top: 4px; }
+.topics-text { font-size: 12px; color: var(--muted); margin-top: 8px; }
+.empty { font-size: 13px; color: #475569; }
+.inline-btn {
+  background: none; border: none; color: var(--orange); cursor: pointer;
+  font-size: 13px; padding: 0; text-decoration: underline;
+}
+
+/* ── 7-DAY CHART ── */
+.week-chart-wrap {
+  display: flex; flex-direction: column; gap: 8px;
+}
+.week-chart-svg-area {
+  position: relative; width: 100%;
+}
+.week-chart-bars {
+  display: flex; align-items: flex-end; gap: 6px;
+  height: 90px; padding-bottom: 0;
+}
+.week-bar-col {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; gap: 4px; cursor: pointer;
+  position: relative;
+}
+.week-bar-col:hover .week-bar-inner { opacity: 1 !important; filter: brightness(1.2); }
+.week-bar-inner {
+  width: 100%; border-radius: 4px 4px 0 0;
+  transition: opacity 0.15s, filter 0.15s;
+  min-height: 4px;
+  position: relative;
+}
+.week-bar-inner.empty-bar { background: var(--border2) !important; opacity: 0.4; }
+.week-bar-label {
+  font-size: 10px; color: var(--muted); text-align: center;
+}
+.week-bar-hrs {
+  font-size: 10px; font-weight: 600; text-align: center;
+  position: absolute; top: -18px; left: 50%; transform: translateX(-50%);
+  white-space: nowrap;
+}
+.week-target-line {
+  position: absolute; left: 0; right: 0;
+  border-top: 1px dashed var(--orange);
+  pointer-events: none; opacity: 0.4;
+}
+.week-target-label {
+  position: absolute; right: 0;
+  font-size: 9px; color: var(--orange); opacity: 0.6;
+  transform: translateY(-12px);
+}
+
+/* stat bar row for week summary */
+.week-stats-row {
+  display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px;
+}
+.week-stat-pill {
+  flex: 1; min-width: 70px;
+  background: var(--surface2); border: 1px solid var(--border2);
+  border-radius: 8px; padding: 8px 10px; text-align: center;
+}
+.week-stat-val { font-size: 16px; font-weight: 700; color: var(--orange); }
+.week-stat-lbl { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+/* ── TOOLTIP POPUP ── */
+.day-tooltip {
+  display: none; position: absolute; bottom: calc(100% + 8px);
+  left: 50%; transform: translateX(-50%);
+  background: #1e2a3a; border: 1px solid var(--border2);
+  border-radius: 8px; padding: 8px 12px; font-size: 11px;
+  color: var(--text); white-space: nowrap; z-index: 20;
+  pointer-events: none; min-width: 120px; text-align: left;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+.day-tooltip.show { display: block; }
+.tooltip-row { display: flex; justify-content: space-between; gap: 12px; }
+.tooltip-row + .tooltip-row { margin-top: 3px; }
+
+/* ── DONUT / PIE CHART ── */
+.donut-wrap { display: flex; align-items: center; gap: 20px; }
+.donut-legend { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+.legend-row { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+.legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.legend-name { color: var(--sub); flex: 1; }
+.legend-val { color: var(--text); font-weight: 600; }
+.legend-pct { color: var(--muted); font-size: 11px; }
+
+/* ── MOCK CHART ── */
+.mock-chart-area { position: relative; width: 100%; }
+.mock-chart-overlay {
+  position: absolute; inset: 0; cursor: pointer;
+}
+
+/* ── PROGRESS RING ── */
+.progress-ring-wrap { display: flex; align-items: center; gap: 16px; margin-bottom: 10px; }
+.ring-stats { flex: 1; }
+.ring-stat-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px; }
+.ring-stat-label { color: var(--muted); }
+.ring-stat-val { font-weight: 600; }
+
+/* ── ERROR BARS ── */
+.err-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.err-cat-label { font-size: 12px; color: var(--text); width: 100px; flex-shrink: 0; }
+.err-bar-wrap { flex: 1; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.err-bar-fill { height: 100%; background: var(--red); border-radius: 3px; }
+.err-count { font-size: 11px; color: var(--muted); width: 20px; text-align: right; }
+
+/* ── FORM ── */
+label.lbl { display: block; font-size: 12px; color: var(--sub); margin-bottom: 5px; margin-top: 14px; }
+input, select, textarea {
+  width: 100%; padding: 9px 12px; border-radius: 8px;
+  border: 1px solid var(--border2); background: #0d0f18;
+  color: var(--text); font-size: 14px; outline: none; font-family: inherit;
+}
+input:focus, select:focus, textarea:focus { border-color: var(--orange); }
+textarea { resize: vertical; }
+.row2 { display: flex; gap: 12px; }
+.row2 > div { flex: 1; }
+
+.chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.chip {
+  padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border2);
+  background: #0d0f18; color: var(--sub); font-size: 12px; cursor: pointer;
+}
+.chip.on { background: var(--orange-d); border-color: var(--orange); color: var(--orange-l); }
+.chip-custom {
+  padding: 5px 12px; border-radius: 20px; border: 1px dashed var(--border2);
+  background: transparent; color: var(--muted); font-size: 12px; cursor: pointer;
+}
+.chip-custom:hover { border-color: var(--orange); color: var(--orange); }
+
+.btn-primary {
+  margin-top: 16px; width: 100%; padding: 12px;
+  border-radius: 8px; border: none; background: var(--orange);
+  color: #fff; font-size: 14px; font-weight: 700; cursor: pointer;
+  transition: opacity 0.15s;
+}
+.btn-primary:hover { opacity: 0.88; }
+.btn-secondary {
+  padding: 9px 16px; border-radius: 8px;
+  border: 1px solid var(--border2); background: transparent;
+  color: var(--sub); font-size: 13px; cursor: pointer;
+}
+.btn-secondary:hover { border-color: var(--orange); color: var(--orange); }
+.btn-danger {
+  padding: 9px 16px; border-radius: 8px;
+  border: 1px solid #7f1d1d; background: transparent;
+  color: var(--red); font-size: 13px; cursor: pointer;
+}
+
+/* ── MOCK LIST ── */
+.mock-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 9px 0; border-bottom: 1px solid var(--border);
+}
+.mock-subject { font-size: 13px; color: var(--text); margin-right: 8px; }
+.mock-date { font-size: 11px; color: #475569; }
+.mock-score-wrap { display: flex; gap: 8px; align-items: baseline; }
+.mock-pct { font-size: 11px; color: var(--muted); }
+
+/* ── ERROR LIST ── */
+.err-entry { padding: 9px 0; border-bottom: 1px solid var(--border); }
+.err-top { display: flex; justify-content: space-between; margin-bottom: 3px; }
+.err-badge {
+  font-size: 10px; background: var(--border); border: 1px solid var(--border2);
+  border-radius: 4px; padding: 1px 6px; color: var(--sub);
+}
+.err-date { font-size: 10px; color: #475569; }
+.err-topic { font-size: 13px; color: var(--text); }
+.err-note { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+/* ── SETTINGS MODAL ── */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.7); z-index: 100;
+  align-items: center; justify-content: center; padding: 20px;
+}
+.modal-overlay.open { display: flex; }
+.modal-card {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 16px; padding: 24px; width: 100%; max-width: 380px;
+  max-height: 80vh; overflow-y: auto;
+}
+.modal-title { font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 20px; }
+.modal-section { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.09em; margin: 18px 0 8px; }
+.modal-section:first-of-type { margin-top: 0; }
+.modal-close {
+  float: right; background: none; border: none; color: var(--muted);
+  font-size: 20px; cursor: pointer; margin-top: -2px;
+}
+.modal-close:hover { color: var(--text); }
+.custom-subjects-list { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.custom-subj-row { display: flex; gap: 6px; align-items: center; }
+.custom-subj-row input { flex: 1; }
+.custom-subj-del { background: none; border: none; color: var(--red); cursor: pointer; font-size: 16px; padding: 0 4px; }
+.add-subj-row { display: flex; gap: 8px; margin-top: 8px; }
+.add-subj-row input { flex: 1; }
+.add-subj-row button { padding: 9px 14px; border-radius: 8px; border: 1px solid var(--orange); background: transparent; color: var(--orange); cursor: pointer; font-size: 13px; }
+
+/* ── INLINE TOPIC ADD ── */
+.manual-add-row { display: flex; gap: 8px; margin-top: 8px; }
+.manual-add-row input { flex: 1; font-size: 13px; padding: 7px 10px; }
+.manual-add-row button { padding: 7px 12px; border-radius: 8px; border: 1px solid var(--orange); background: transparent; color: var(--orange); cursor: pointer; font-size: 12px; white-space: nowrap; }
+
+/* ── TOPIC ANALYSIS ── */
+.topic-analysis { margin-top: 12px; }
+.topic-heatrow { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.topic-name { font-size: 12px; color: var(--text); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.topic-bar-wrap { width: 80px; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; flex-shrink: 0; }
+.topic-bar-fill { height: 100%; border-radius: 3px; background: var(--indigo); }
+.topic-count { font-size: 11px; color: var(--muted); width: 28px; text-align: right; flex-shrink: 0; }
+
+/* ── BACKUP SECTION ── */
+.backup-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.backup-info { font-size: 12px; color: var(--muted); margin-top: 8px; line-height: 1.6; }
+
+/* ── TOAST ── */
+#toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  background: #1e2235; border: 1px solid var(--border2);
+  color: var(--text); padding: 10px 20px; border-radius: 8px;
+  font-size: 13px; opacity: 0; transition: opacity 0.2s;
+  pointer-events: none; white-space: nowrap; z-index: 999;
+}
+#toast.show { opacity: 1; }
+
+/* ── LATEST MOCK ── */
+.latest-mock { font-size: 12px; color: var(--sub); margin-top: 8px; }
+
+/* ── SECTION TABS (hidden panels) ── */
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* ── SUBJECT HOUR ROWS ── */
+.subj-hour-row {
+  display: flex; align-items: center; gap: 10px;
+}
+.subj-hour-label {
+  font-size: 13px; color: var(--text); flex: 1; min-width: 80px;
+}
+.subj-hour-input {
+  width: 80px !important; flex: none; text-align: right;
+}
+.subj-hour-unit { font-size: 11px; color: var(--muted); white-space: nowrap; }
+
+/* ── HISTORY ── */
+.hist-day-card {
+  background: var(--surface2); border: 1px solid var(--border2);
+  border-radius: 10px; padding: 14px; margin-bottom: 4px;
+}
+.hist-day-header {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 10px;
+}
+.hist-day-date { font-size: 15px; font-weight: 700; color: var(--orange); }
+.hist-day-hrs  { font-size: 13px; color: var(--sub); }
+.hist-stat-row {
+  display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px;
+}
+.hist-stat-pill {
+  background: var(--border); border-radius: 6px; padding: 4px 10px;
+  font-size: 11px; color: var(--sub);
+}
+.hist-stat-pill strong { color: var(--text); }
+.hist-subj-bars { margin-bottom: 8px; }
+.hist-subj-row { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+.hist-subj-name { font-size: 12px; color: var(--text); width: 90px; flex-shrink: 0; }
+.hist-subj-bar-wrap { flex: 1; height: 7px; background: var(--border); border-radius: 4px; overflow: hidden; }
+.hist-subj-bar-fill { height: 100%; border-radius: 4px; }
+.hist-subj-val { font-size: 11px; color: var(--muted); width: 32px; text-align: right; flex-shrink: 0; }
+.hist-topics { font-size: 12px; color: var(--muted); line-height: 1.6; }
+.hist-no-log { font-size: 13px; color: #475569; padding: 10px 0; }
+
+/* ── ALL DAYS LIST ── */
+.all-days-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 0; border-bottom: 1px solid var(--border); cursor: pointer;
+}
+.all-days-row:hover .all-days-date { color: var(--orange); }
+.all-days-date { font-size: 13px; color: var(--sub); width: 90px; flex-shrink: 0; }
+.all-days-bar-wrap { flex: 1; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.all-days-bar { height: 100%; border-radius: 3px; }
+.all-days-hrs { font-size: 12px; color: var(--text); font-weight: 600; width: 36px; text-align: right; flex-shrink: 0; }
+.all-days-subj { font-size: 11px; color: var(--muted); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+
+.heatmap-row { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 8px; }
+.heat-cell {
+  width: 28px; height: 28px; border-radius: 5px; cursor: pointer;
+  border: 1px solid transparent; transition: transform 0.1s;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 600; color: transparent;
+}
+.heat-cell:hover { transform: scale(1.2); border-color: var(--orange); color: rgba(255,255,255,0.7); }
+.heat-0 { background: var(--border2); }
+.heat-1 { background: #7c2d12; }
+.heat-2 { background: #c2410c; }
+.heat-3 { background: #f97316; }
+.heat-4 { background: #fde68a; }
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-overlay" id="settings-modal">
+  <div class="modal-card">
+    <div class="modal-title">
+      ⚙️ Personalisation
+      <button class="modal-close" onclick="closeSettings()">✕</button>
+    </div>
+
+    <div class="modal-section">Tracker Identity</div>
+    <label class="lbl">Tracker name</label>
+    <input type="text" id="set-name" placeholder="e.g. Operation Phoenix, My Study Hub…" maxlength="30">
+
+    <div class="modal-section">Study Target</div>
+    <label class="lbl">Daily target hours</label>
+    <input type="number" id="set-target" min="1" max="20" step="0.5" placeholder="6">
+    <div style="font-size:11px;color:var(--muted);margin-top:5px;">Default: 6 hrs. All dashboard stats and bars scale to this.</div>
+
+    <div class="modal-section">Custom Subjects</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Add your own subjects. They appear as chips in Daily Log and Mock Score forms.</div>
+    <div class="custom-subjects-list" id="custom-subjects-list"></div>
+    <div class="add-subj-row">
+      <input type="text" id="new-subj-input" placeholder="Subject name…" maxlength="30">
+      <button onclick="addCustomSubject()">+ Add</button>
+    </div>
+
+    <div class="modal-section">Custom Error Categories</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Add topic categories for the Error Log.</div>
+    <div class="custom-subjects-list" id="custom-cats-list"></div>
+    <div class="add-subj-row">
+      <input type="text" id="new-cat-input" placeholder="Category name…" maxlength="30">
+      <button onclick="addCustomCategory()">+ Add</button>
+    </div>
+
+    <div class="modal-section">Other Activity Categories</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Add categories for the "Other" side of your Daily Log (gym, class, family, etc.).</div>
+    <div class="custom-subjects-list" id="custom-other-cats-list"></div>
+    <div class="add-subj-row">
+      <input type="text" id="new-other-cat-input" placeholder="Activity name…" maxlength="30">
+      <button onclick="addCustomOtherCat()">+ Add</button>
+    </div>
+
+    <div class="modal-section">Honest-Mirror Threshold</div>
+    <label class="lbl">Combined hours (Study + Other) below this = "lost day"</label>
+    <input type="number" id="set-lost-threshold" min="0" max="24" step="0.5" placeholder="3">
+    <div style="font-size:11px;color:var(--muted);margin-top:5px;">Used only in the Combined dashboard view to gently flag low-output days. Tune it to what actually feels true for you.</div>
+
+    <div class="modal-section">Motivational Quote</div>
+    <label class="lbl">Your personal quote / motto</label>
+    <textarea id="set-quote" rows="2" placeholder="e.g. একটু একটু করে শেখা, একদিন বড় হওয়া…"></textarea>
+
+    <button class="btn-primary" onclick="saveSettings()">Save Settings</button>
+  </div>
+</div>
+
+<!-- SETUP SCREEN -->
+<div id="setup">
+  <div class="setup-card">
+    <div class="setup-flame">🔥</div>
+    <h1 class="setup-title" id="setup-title-text">Operation Phoenix</h1>
+    <p class="setup-sub">Set up your personal study tracker. Everything — phases, weeks, daily goals — auto-calculates from your start date.</p>
+
+    <div class="setup-section-title">Tracker Name</div>
+    <input type="text" id="setup-tracker-name" placeholder="e.g. Operation Phoenix, My BCS Journey…" maxlength="30">
+
+    <div class="setup-section-title">Start Date</div>
+    <input type="date" id="start-input" style="margin-bottom:4px;">
+
+    <div class="setup-section-title">Daily Target Hours</div>
+    <input type="number" id="setup-target" min="1" max="20" step="0.5" placeholder="6 hrs (default)" value="6">
+
+    <div class="setup-section-title">Personal Motto (optional)</div>
+    <textarea id="setup-quote" rows="2" placeholder="A quote that keeps you going…" style="margin-bottom:4px;"></textarea>
+
+    <button class="btn-primary" onclick="beginOperation()" style="margin-top:20px;">Begin →</button>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+
+  <!-- Header -->
+  <div class="header">
+    <span class="logo" id="app-logo">🔥 Phoenix</span>
+    <div class="header-right">
+      <span class="pill pill-warn" id="week4-pill" style="display:none;">⚠ Buffer Week</span>
+      <button class="settings-btn" onclick="openSettings()">⚙ Settings</button>
+    </div>
+  </div>
+
+  <!-- Quote Banner -->
+  <div class="quote-banner" id="quote-banner" style="display:none;">
+    <span class="quote-icon">💬</span>
+    <div class="quote-text" id="quote-display"></div>
+  </div>
+
+  <!-- Banner -->
+  <div class="banner">
+    <div class="b-stat"><span class="b-num" id="bn-month">—</span><span class="b-label">Month</span></div>
+    <div class="b-div"></div>
+    <div class="b-stat"><span class="b-num" id="bn-week">—</span><span class="b-label">of 4</span></div>
+    <div class="b-div"></div>
+    <div class="b-stat"><span class="b-num" id="bn-days">—</span><span class="b-label">Days studied</span></div>
+    <div class="b-div"></div>
+    <div class="b-stat"><span class="b-num" id="bn-avg">—</span><span class="b-label">Daily avg</span></div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('dashboard',this)">Dashboard</button>
+    <button class="tab" onclick="switchTab('checkin',this)">Daily Log</button>
+    <button class="tab" onclick="switchTab('mock',this)">Mock Scores</button>
+    <button class="tab" onclick="switchTab('errors',this)">Error Log</button>
+    <button class="tab" onclick="switchTab('history',this)">History</button>
+    <button class="tab" onclick="switchTab('backup',this)">Backup</button>
+  </div>
+
+  <div class="content">
+
+    <!-- ── DASHBOARD ── -->
+    <div id="panel-dashboard" class="panel active">
+      <div id="week4-alert" class="alert" style="display:none;">
+        🛑 <strong>Week 4 — Buffer Zone.</strong> No new topics this week. Review everything and run your mock exam.
+      </div>
+
+      <!-- View toggle -->
+      <div class="card" style="padding:8px;">
+        <div style="display:flex;gap:6px;">
+          <button class="btn-secondary" id="dv-study-btn" style="flex:1;padding:9px 4px;font-size:12px;" onclick="setDashView('study')">📚 Study</button>
+          <button class="btn-secondary" id="dv-other-btn" style="flex:1;padding:9px 4px;font-size:12px;" onclick="setDashView('other')">🌱 Other</button>
+          <button class="btn-secondary" id="dv-combined-btn" style="flex:1;padding:9px 4px;font-size:12px;" onclick="setDashView('combined')">🔎 Combined</button>
+        </div>
+      </div>
+
+      <!-- Combined 24h day view -->
+      <div class="card" id="combined-day-card" style="display:none;">
+        <div class="card-title">Today's 24 Hours</div>
+        <div id="combined-day-content"></div>
+      </div>
+
+      <!-- Today card -->
+      <div class="card" id="today-progress-card">
+        <div class="card-title">Today's Progress</div>
+        <div id="today-content"></div>
+        <div id="today-ring-wrap"></div>
+      </div>
+
+      <!-- 7-day chart -->
+      <div class="card">
+        <div class="card-title">
+          <span>Last 7 Days</span>
+          <span style="font-size:10px;color:var(--muted);font-weight:400;text-transform:none;">Tap a bar for details</span>
+        </div>
+        <div class="week-chart-wrap">
+          <div class="week-chart-bars" id="week-bars"></div>
+          <div class="week-stats-row" id="week-summary-pills"></div>
+        </div>
+      </div>
+
+      <!-- Subject breakdown donut -->
+      <div class="card">
+        <div class="card-title">Subject Time Breakdown</div>
+        <div class="donut-wrap">
+          <svg id="donut-svg" width="110" height="110" viewBox="0 0 110 110"></svg>
+          <div class="donut-legend" id="donut-legend"></div>
+        </div>
+      </div>
+
+      <!-- Mock trend line chart -->
+      <div class="card">
+        <div class="card-title">
+          <span>Mock Score Trend</span>
+        </div>
+        <div id="mock-line-chart"></div>
+      </div>
+
+      <!-- Weak areas -->
+      <div class="card">
+        <div class="card-title">Weak Areas (Error Frequency)</div>
+        <div id="err-freq"></div>
+      </div>
+
+      <!-- Topic coverage analysis -->
+      <div class="card">
+        <div class="card-title">Topics You've Studied</div>
+        <div id="topic-coverage" class="topic-analysis"></div>
+      </div>
+
+    </div>
+
+    <!-- ── DAILY LOG ── -->
+    <div id="panel-checkin" class="panel">
+      <!-- Date picker for reviewing/editing any past day -->
+      <div class="card" style="margin-bottom:10px;">
+        <div class="card-title" style="margin-bottom:10px;">
+          <span id="checkin-date-label">Today's Log</span>
+          <span style="font-size:10px;color:var(--muted);font-weight:400;text-transform:none;">Pick any date to review</span>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <input type="date" id="ci-date-picker" style="flex:1;" onchange="loadDayForEdit()">
+          <button class="btn-secondary" style="padding:8px 12px;white-space:nowrap;" onclick="jumpToToday()">Today</button>
+        </div>
+      </div>
+
+      <!-- Study / Other log-mode toggle -->
+      <div class="card" style="padding:8px;">
+        <div style="display:flex;gap:6px;">
+          <button class="btn-secondary" id="ci-mode-study-btn" style="flex:1;padding:10px;" onclick="setCiLogMode('study')">📚 Study</button>
+          <button class="btn-secondary" id="ci-mode-other-btn" style="flex:1;padding:10px;" onclick="setCiLogMode('other')">🌱 Other</button>
+        </div>
+      </div>
+
+      <div class="card" id="ci-study-card">
+        <div class="card-title"><span id="today-label"></span></div>
+        <div id="week4-checkin-alert" class="alert" style="display:none;">
+          Week 4 buffer — log review time, not new topics.
+        </div>
+
+        <label class="lbl">Total hours studied today</label>
+        <input type="number" id="ci-hours" min="0" max="24" step="0.5" placeholder="e.g. 6.5">
+
+        <label class="lbl" style="margin-top:16px;">Time spent per subject <span style="color:var(--muted);font-weight:400;">(enter actual hours for each)</span></label>
+        <div id="subject-hours-rows" style="margin-top:8px;display:flex;flex-direction:column;gap:8px;"></div>
+        <div style="font-size:11px;color:var(--muted);margin-top:6px;" id="subj-hours-note"></div>
+
+        <label class="lbl" style="margin-top:16px;">Also tick subjects covered (for filtering)</label>
+        <div class="chip-row" id="subject-chips"></div>
+
+        <label class="lbl">Topics / notes</label>
+        <textarea id="ci-topics" rows="3" placeholder="e.g. Parts of Speech, Tense revision, সন্ধি..."></textarea>
+        <div class="manual-add-row">
+          <input type="text" id="ci-topic-input" placeholder="Quick add a topic tag…">
+          <button onclick="addTopicTag()">+ Add</button>
+        </div>
+        <div class="chip-row" id="ci-topic-tags" style="margin-top:8px;"></div>
+
+        <button class="btn-primary" id="ci-btn" onclick="saveCheckin()">Save Log</button>
+      </div>
+
+      <!-- Other / self-improvement log card -->
+      <div class="card" id="ci-other-card" style="display:none;">
+        <div class="card-title"><span id="today-label-other"></span></div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Track the rest of your 24 hours — gym, class, family, rest. Doesn't affect your study stats or DBS priorities.</div>
+
+        <label class="lbl">Activity & hours</label>
+        <div class="chip-row" id="other-cat-chips"></div>
+        <div id="other-hours-rows" style="margin-top:8px;display:flex;flex-direction:column;gap:8px;"></div>
+        <div style="font-size:11px;color:var(--muted);margin-top:6px;" id="other-hours-note"></div>
+
+        <label class="lbl" style="margin-top:16px;">Notes (optional)</label>
+        <textarea id="ci-other-notes" rows="2" placeholder="e.g. Cousin's engagement, missed gym due to rain..."></textarea>
+
+        <button class="btn-primary" id="ci-other-btn" onclick="saveOtherCheckin()">Save Log</button>
+      </div>
+
+      <!-- Past day read-only detail card (shown when viewing a past day that's already saved) -->
+      <div class="card" id="past-day-card" style="display:none;">
+        <div class="card-title">📋 Saved Entry</div>
+        <div id="past-day-detail"></div>
+      </div>
+    </div>
+
+    <!-- ── MOCK SCORES ── -->
+    <div id="panel-mock" class="panel">
+      <div class="card">
+        <div class="card-title">Log a Mock Score</div>
+        <label class="lbl">Subject</label>
+        <select id="mk-subject"></select>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">Or add a custom subject in ⚙ Settings</div>
+        <div class="row2">
+          <div>
+            <label class="lbl">Score</label>
+            <input type="number" id="mk-score" placeholder="32.5" step="0.25">
+          </div>
+          <div>
+            <label class="lbl">Out of</label>
+            <input type="number" id="mk-total" placeholder="40" value="40" step="0.25">
+          </div>
+        </div>
+        <label class="lbl">Notes (optional)</label>
+        <textarea id="mk-notes" rows="2" placeholder="e.g. Weak in narration, strong in vocabulary..."></textarea>
+        <div style="display:flex;gap:8px;">
+          <button class="btn-primary" id="mk-save-btn" style="flex:1;" onclick="saveMock()">Log Score</button>
+          <button class="btn-secondary" style="flex:0 0 auto;padding:10px 14px;" onclick="cancelEditMock()">Cancel</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Mock History</div>
+        <div id="mock-list"></div>
+      </div>
+    </div>
+
+    <!-- ── ERROR LOG ── -->
+    <div id="panel-errors" class="panel">
+      <div class="card">
+        <div class="card-title">Log an Error</div>
+        <label class="lbl">Category</label>
+        <select id="err-cat"></select>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">Add custom categories in ⚙ Settings</div>
+
+        <label class="lbl">Specific topic or question</label>
+        <input type="text" id="err-topic" placeholder="e.g. Passive voice with modals">
+        <div class="manual-add-row" style="margin-top:6px;">
+          <input type="text" id="err-topic-manual" placeholder="Or type topic here and add…">
+          <button onclick="useManualErrorTopic()">Use</button>
+        </div>
+
+        <label class="lbl">What you got wrong</label>
+        <textarea id="err-note" rows="2" placeholder="e.g. Confused 'was being' with 'had been'..."></textarea>
+        <button class="btn-primary" onclick="saveError()">Log Error</button>
+      </div>
+      <div class="card">
+        <div class="card-title">Recent Errors — <span id="err-total"></span></div>
+        <div id="err-list"></div>
+      </div>
+    </div>
+
+    <!-- ── HISTORY ── -->
+    <div id="panel-history" class="panel">
+      <div class="card">
+        <div class="card-title">
+          <span>Day History</span>
+          <span style="font-size:10px;color:var(--muted);font-weight:400;text-transform:none;">Browse any logged day</span>
+        </div>
+
+        <!-- Date picker -->
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:14px;">
+          <input type="date" id="hist-date-picker" style="flex:1;" onchange="loadHistoryDay()">
+          <button class="btn-secondary" style="padding:8px 12px;white-space:nowrap;" onclick="histJumpToday()">Today</button>
+        </div>
+
+        <!-- Nav row -->
+        <div style="display:flex;gap:6px;margin-bottom:14px;">
+          <button class="btn-secondary" style="flex:1;padding:7px 8px;font-size:12px;" onclick="histNavDay(-1)">← Prev Day</button>
+          <button class="btn-secondary" style="flex:1;padding:7px 8px;font-size:12px;" onclick="histNavDay(1)">Next Day →</button>
+        </div>
+
+        <div id="hist-day-detail">
+          <div class="empty">Pick a date above to review that day's log.</div>
+        </div>
+      </div>
+
+      <!-- Logged days calendar strip -->
+      <div class="card">
+        <div class="card-title">All Logged Days</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Tap any date to load it above.</div>
+        <div id="hist-all-days"></div>
+      </div>
+    </div>
+
+    <!-- ── BACKUP ── -->
+    <div id="panel-backup" class="panel">
+      <div class="card">
+        <div class="card-title">Export Backup</div>
+        <p class="backup-info">Download all your data as a <code>.json</code> file. Save it to Google Drive or your phone.</p>
+        <div class="backup-row" style="margin-top:14px;">
+          <button class="btn-primary" style="margin-top:0;flex:1;" onclick="exportData()">⬇ Download Backup</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Restore from Backup</div>
+        <p class="backup-info">Upload a previously exported <code>.json</code> file. This replaces all current data.</p>
+        <div class="backup-row" style="margin-top:14px;">
+          <input type="file" id="restore-file" accept=".json" style="display:none;" onchange="restoreData(event)">
+          <button class="btn-secondary" onclick="document.getElementById('restore-file').click()">⬆ Upload Backup File</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Data Summary</div>
+        <div id="data-summary" class="backup-info"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Danger Zone</div>
+        <p class="backup-info">Reset deletes all data permanently. Export a backup first.</p>
+        <div class="backup-row" style="margin-top:14px;">
+          <button class="btn-danger" onclick="resetAll()">Reset Everything</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /app -->
+
+<!-- Footer -->
+<div style="text-align:center;padding:18px 16px 28px;font-size:11px;color:#334155;letter-spacing:0.04em;">
+  © <span id="footer-year"></span> <strong style="color:#475569;">kowsar0x9</strong> · MIT License<br>
+  <span style="color:#475569;">v3</span> · Last updated <span id="footer-updated">11 Jul 2026</span>
+</div>
+
+<script>
+document.getElementById('footer-year').textContent = new Date().getFullYear();
+</script>
+
+<script>
+// ─── Constants ────────────────────────────────────────────────────────────────
+const PHASE_MAP = [
+  { phase:1, label:"Phase 1 – English & Bangla Foundation", months:[1,2] },
+  { phase:2, label:"Phase 2 – Math & General Affairs",      months:[3,4] },
+  { phase:3, label:"Phase 3 – BCS Exclusive Subjects",      months:[5,6] },
+  { phase:4, label:"Phase 4 – Bank Exclusive Content",      months:[7] },
+  { phase:5, label:"Phase 5 – Mock Tests & Applications",   months:[8,9] },
+  { phase:6, label:"Phase 6 – BCS Written Prep",            months:[10,11,12] },
+];
+const BASE_SUBJECTS = ["English","Bangla","Math","General Knowledge","Computer","Other"];
+const BASE_CATS = ["Grammar","Vocabulary","Literature","Bangla Grammar","বাগধারা","সন্ধি","সমাস","Math","GK","Other"];
+const BASE_OTHER_CATS = ["Gym","Class/Seminar","Reading","Family","Errand","Rest/Sleep","Other"];
+
+const MOTIVATIONAL_QUOTES = [
+  "Discipline is choosing between what you want now and what you want most.",
+  "The expert in anything was once a beginner who refused to quit.",
+  "You don't rise to the level of your goals — you fall to the level of your systems.",
+  "Small daily improvements are the key to staggering long-term results.",
+  "Don't wish it were easier. Wish you were better.",
+  "এক ধাপ এক ধাপ করে এগিয়ে যাও — লক্ষ্য একদিন ধরা দেবেই।",
+  "Success is the sum of small efforts repeated day in and day out.",
+  "Data beats emotions. Trust the DBS table, not the mood of the day.",
+  "যে পরিশ্রম করে, ভাগ্য তাকেই সহায় করে।",
+  "The pain of discipline weighs ounces; the pain of regret weighs tons.",
+  "You are not competing with others. You are competing with yesterday's you.",
+  "একদিন সবাই জিজ্ঞেস করবে কীভাবে করলে — আজ কেউ জিজ্ঞেস করছে না, তাই থামা যাবে না।",
+  "Consistency is what transforms average into excellence.",
+  "Every hour you study today is a vote for the cadre you want to become.",
+  "কষ্ট গোপন রাখো, ফলাফল প্রকাশ করো।",
+  "Motivation gets you started. Discipline keeps you going.",
+  "The exam doesn't care how you feel. Show up anyway.",
+  "বড় স্বপ্নের জন্য ছোট ছোট আত্মত্যাগ দরকার — আজকের আত্মত্যাগটুকু দাও।",
+  "Your future self is watching you right now through memories.",
+  "Hard days build the version of you that passes the exam.",
+];
+
+// ─── Session Quote ────────────────────────────────────────────────────────────
+// Picked once when the app loads (i.e. each time the user logs in / opens the page),
+// then stays fixed for the rest of that session so it doesn't flicker on every render.
+function pickSessionQuote() {
+  const pool = state.quote ? [state.quote, ...MOTIVATIONAL_QUOTES] : MOTIVATIONAL_QUOTES;
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+let sessionQuote = '';
+
+// ─── State ────────────────────────────────────────────────────────────────────
+let state = {
+  startDate: null,
+  trackerName: 'Operation Phoenix',
+  dailyTarget: 6,
+  customSubjects: [],
+  customCats: [],
+  customOtherCats: [],
+  lostDayThreshold: 3,
+  quote: '',
+  logs:   {},
+  mocks:  [],
+  errors: [],
+  topicTags: [], // array of topic strings accumulated
+};
+let ciSubjects = [];
+let ciTopicTags = [];
+let ciSubjectHours = {}; // { "English": 2.5, "Math": 1.5 }
+let ciEditingDate = null; // null = today, else "YYYY-MM-DD"
+let ciLogMode = 'study'; // 'study' | 'other'
+let ciOtherCats = [];
+let ciOtherCatHours = {}; // { "Gym": 1, "Class/Seminar": 2 }
+let dashView = 'combined'; // 'study' | 'other' | 'combined'
+
+// ─── Storage ──────────────────────────────────────────────────────────────────
+function saveState() { localStorage.setItem('phoenix_data', JSON.stringify(state)); }
+function loadState() {
+  const raw = localStorage.getItem('phoenix_data');
+  if (raw) {
+    const parsed = JSON.parse(raw);
+    // Merge with defaults in case keys are missing
+    state = Object.assign({ trackerName:'Operation Phoenix', dailyTarget:6, customSubjects:[], customCats:[], customOtherCats:[], lostDayThreshold:3, quote:'', topicTags:[] }, parsed);
+    return true;
+  }
+  return false;
+}
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+function todayKey() { return new Date().toISOString().slice(0,10); }
+function monthsElapsed(start) {
+  const totalWeeks = weeksElapsed(start);
+  return Math.max(1, Math.min(12, Math.ceil(totalWeeks / 4)));
+}
+function weeksElapsed(start) {
+  return Math.max(1, Math.floor((new Date()-start)/(7*86400000))+1);
+}
+function getPhase(month) { return PHASE_MAP.find(p=>p.months.includes(month))||PHASE_MAP[0]; }
+function weekInMonth(start) {
+  const month = monthsElapsed(start);
+  const totalWeeks = weeksElapsed(start);
+  return Math.min(4, Math.max(1, totalWeeks - (month-1)*4));
+}
+function allSubjects() { return [...BASE_SUBJECTS.slice(0,-1), ...state.customSubjects, 'Other']; }
+function allCats() { return [...BASE_CATS.slice(0,-1), ...state.customCats, 'Other']; }
+function allOtherCats() { return [...BASE_OTHER_CATS.slice(0,-1), ...(state.customOtherCats||[]), 'Other']; }
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+(function init() {
+  if (loadState() && state.startDate) {
+    sessionQuote = pickSessionQuote();
+    document.getElementById('setup').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    render();
+  }
+  document.getElementById('today-label').textContent = todayKey();
+})();
+
+function beginOperation() {
+  const val = document.getElementById('start-input').value;
+  if (!val) { toast('Please pick a start date'); return; }
+  state.startDate = val;
+  const nameInput = document.getElementById('setup-tracker-name').value.trim();
+  if (nameInput) state.trackerName = nameInput;
+  const targetInput = parseFloat(document.getElementById('setup-target').value);
+  if (targetInput && targetInput > 0) state.dailyTarget = targetInput;
+  const q = document.getElementById('setup-quote').value.trim();
+  if (q) state.quote = q;
+  saveState();
+  sessionQuote = pickSessionQuote();
+  document.getElementById('setup').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  render();
+}
+
+// ─── Settings modal ──────────────────────────────────────────────────────────
+function openSettings() {
+  document.getElementById('set-name').value = state.trackerName || '';
+  document.getElementById('set-target').value = state.dailyTarget || 6;
+  document.getElementById('set-quote').value = state.quote || '';
+  document.getElementById('set-lost-threshold').value = state.lostDayThreshold != null ? state.lostDayThreshold : 3;
+  renderCustomSubjectsList();
+  renderCustomCatsList();
+  renderCustomOtherCatsList();
+  document.getElementById('settings-modal').classList.add('open');
+}
+function closeSettings() { document.getElementById('settings-modal').classList.remove('open'); }
+
+function renderCustomSubjectsList() {
+  const el = document.getElementById('custom-subjects-list');
+  el.innerHTML = state.customSubjects.map((s,i) => `
+    <div class="custom-subj-row">
+      <input type="text" value="${s}" onchange="state.customSubjects[${i}]=this.value">
+      <button class="custom-subj-del" onclick="removeCustomSubject(${i})">✕</button>
+    </div>
+  `).join('');
+}
+function addCustomSubject() {
+  const v = document.getElementById('new-subj-input').value.trim();
+  if (!v) return;
+  state.customSubjects.push(v);
+  document.getElementById('new-subj-input').value = '';
+  renderCustomSubjectsList();
+}
+function removeCustomSubject(i) { state.customSubjects.splice(i,1); renderCustomSubjectsList(); }
+
+function renderCustomCatsList() {
+  const el = document.getElementById('custom-cats-list');
+  el.innerHTML = state.customCats.map((c,i) => `
+    <div class="custom-subj-row">
+      <input type="text" value="${c}" onchange="state.customCats[${i}]=this.value">
+      <button class="custom-subj-del" onclick="removeCustomCat(${i})">✕</button>
+    </div>
+  `).join('');
+}
+function addCustomCategory() {
+  const v = document.getElementById('new-cat-input').value.trim();
+  if (!v) return;
+  state.customCats.push(v);
+  document.getElementById('new-cat-input').value = '';
+  renderCustomCatsList();
+}
+function removeCustomCat(i) { state.customCats.splice(i,1); renderCustomCatsList(); }
+
+function renderCustomOtherCatsList() {
+  const el = document.getElementById('custom-other-cats-list');
+  if (!state.customOtherCats) state.customOtherCats = [];
+  el.innerHTML = state.customOtherCats.map((c,i) => `
+    <div class="custom-subj-row">
+      <input type="text" value="${c}" onchange="state.customOtherCats[${i}]=this.value">
+      <button class="custom-subj-del" onclick="removeCustomOtherCat(${i})">✕</button>
+    </div>
+  `).join('');
+}
+function addCustomOtherCat() {
+  const v = document.getElementById('new-other-cat-input').value.trim();
+  if (!v) return;
+  if (!state.customOtherCats) state.customOtherCats = [];
+  state.customOtherCats.push(v);
+  document.getElementById('new-other-cat-input').value = '';
+  renderCustomOtherCatsList();
+}
+function removeCustomOtherCat(i) { state.customOtherCats.splice(i,1); renderCustomOtherCatsList(); }
+
+function saveSettings() {
+  const nameVal = document.getElementById('set-name').value.trim();
+  if (nameVal) state.trackerName = nameVal;
+  const t = parseFloat(document.getElementById('set-target').value);
+  if (t && t > 0) state.dailyTarget = t;
+  const lt = parseFloat(document.getElementById('set-lost-threshold').value);
+  state.lostDayThreshold = (!isNaN(lt) && lt >= 0) ? lt : 3;
+  state.quote = document.getElementById('set-quote').value.trim();
+  saveState();
+  closeSettings();
+  render();
+  toast('✓ Settings saved');
+}
+
+// ─── Dashboard view toggle (Study / Other / Combined) ─────────────────────────
+function setDashView(view) {
+  dashView = view;
+  applyDashView();
+}
+
+function applyDashView() {
+  const studyBtn = document.getElementById('dv-study-btn');
+  const otherBtn = document.getElementById('dv-other-btn');
+  const combinedBtn = document.getElementById('dv-combined-btn');
+  [studyBtn, otherBtn, combinedBtn].forEach(b => { if (b) { b.style.borderColor=''; b.style.color=''; } });
+  const active = { study: studyBtn, other: otherBtn, combined: combinedBtn }[dashView];
+  if (active) { active.style.borderColor = 'var(--orange)'; active.style.color = 'var(--orange)'; }
+
+  const combinedCard = document.getElementById('combined-day-card');
+  const studyCard = document.getElementById('today-progress-card');
+
+  if (dashView === 'combined') {
+    combinedCard.style.display = 'block';
+    studyCard.style.display = 'block';
+    renderCombinedDay();
+  } else if (dashView === 'other') {
+    combinedCard.style.display = 'none';
+    studyCard.style.display = 'none';
+    renderOtherDashView();
+  } else {
+    combinedCard.style.display = 'none';
+    studyCard.style.display = 'block';
+  }
+}
+
+function renderCombinedDay() {
+  const el = document.getElementById('combined-day-content');
+  if (!el) return;
+  const key = todayKey();
+  const log = state.logs[key] || {};
+  const studyH = log.hours || 0;
+  const otherH = log.otherHours || 0;
+  const total = studyH + otherH;
+  const idle = Math.max(0, 24 - total);
+  const threshold = state.lostDayThreshold != null ? state.lostDayThreshold : 3;
+
+  const studyPct = (studyH/24)*100;
+  const otherPct = (otherH/24)*100;
+  const idlePct = (idle/24)*100;
+
+  let verdict, verdictColor, verdictNote;
+  if (total >= threshold && studyH > 0) {
+    verdict = "You showed up today.";
+    verdictColor = '#4ade80';
+    verdictNote = `${studyH}h toward your goal, ${otherH}h toward the rest of your life. That's a day well spent.`;
+  } else if (total >= threshold && studyH === 0 && otherH > 0) {
+    verdict = "A life day, not a study day.";
+    verdictColor = '#38bdf8';
+    verdictNote = `${otherH}h went into other things today. Not a lost day — just make sure tomorrow brings the study hours back.`;
+  } else {
+    verdict = "This one slipped.";
+    verdictColor = '#f87171';
+    verdictNote = `Only ${total}h accounted for out of 24. No judgment — just notice it, and choose differently tomorrow.`;
+  }
+
+  el.innerHTML = `
+    <div style="display:flex;height:14px;border-radius:7px;overflow:hidden;background:var(--border2);margin-bottom:10px;">
+      ${studyH>0?`<div style="width:${studyPct}%;background:var(--orange);" title="Study ${studyH}h"></div>`:''}
+      ${otherH>0?`<div style="width:${otherPct}%;background:var(--blue);" title="Other ${otherH}h"></div>`:''}
+      ${idle>0?`<div style="width:${idlePct}%;background:var(--border2);" title="Unlogged ${idle.toFixed(1)}h"></div>`:''}
+    </div>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-bottom:14px;">
+      <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--orange);margin-right:4px;"></span>Study ${studyH}h</span>
+      <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--blue);margin-right:4px;"></span>Other ${otherH}h</span>
+      <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--border2);margin-right:4px;"></span>Unlogged ${idle.toFixed(1)}h</span>
+    </div>
+    <div style="padding:12px;background:var(--surface2);border-radius:10px;border-left:3px solid ${verdictColor};">
+      <div style="font-weight:700;color:${verdictColor};font-size:14px;margin-bottom:4px;">${verdict}</div>
+      <div style="font-size:12px;color:var(--sub);line-height:1.5;">${verdictNote}</div>
+    </div>
+  `;
+}
+
+function renderOtherDashView() {
+  // Reuse today-content area to show Other-only stats when in Other view
+  const el = document.getElementById('today-content');
+  const wrap = document.getElementById('today-ring-wrap');
+  if (wrap) wrap.innerHTML = '';
+  const key = todayKey();
+  const log = state.logs[key] || {};
+  const otherH = log.otherHours || 0;
+  const acts = log.otherActivities || {};
+  const entries = Object.entries(acts);
+
+  const days = Object.keys(state.logs).filter(k => state.logs[k].otherHours > 0);
+  const totalOtherAllTime = days.reduce((a,k)=>a+(state.logs[k].otherHours||0),0);
+
+  if (!entries.length) {
+    el.innerHTML = `<div class="empty">No other-activity log for today yet.</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:8px;">All-time: ${totalOtherAllTime.toFixed(1)}h logged across ${days.length} day(s).</div>`;
+    document.getElementById('today-progress-card').style.display = 'block';
+    return;
+  }
+  document.getElementById('today-progress-card').style.display = 'block';
+  el.innerHTML = `
+    <div class="today-row"><span class="big-num">${otherH}h</span><span class="today-meta">logged today · ${entries.map(([c])=>c).join(', ')}</span></div>
+    <div style="margin-top:10px;display:flex;flex-direction:column;gap:6px;">
+      ${entries.map(([c,h])=>`<div style="display:flex;justify-content:space-between;font-size:13px;"><span>${c}</span><span style="color:var(--blue);font-weight:600">${h}h</span></div>`).join('')}
+    </div>
+    <div style="font-size:12px;color:var(--muted);margin-top:10px;">All-time: ${totalOtherAllTime.toFixed(1)}h logged across ${days.length} day(s).</div>
+  `;
+}
+
+// ─── Tab switching ────────────────────────────────────────────────────────────
+function switchTab(name, btn) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (name === 'backup') renderBackupSummary();
+  if (name === 'checkin') { prefillCheckin(); renderSubjectChips(); }
+  if (name === 'history') { initHistory(); }
+}
+
+function switchTabDirect(name) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  const idx = ['dashboard','checkin','mock','errors','history','backup'].indexOf(name);
+  document.querySelectorAll('.tab')[idx]?.classList.add('active');
+  if (name === 'checkin') { prefillCheckin(); renderSubjectChips(); }
+  if (name === 'history') initHistory();
+}
+
+// ─── Main render ─────────────────────────────────────────────────────────────
+function render() {
+  const TARGET = state.dailyTarget || 6;
+
+  // Update branding
+  const name = state.trackerName || 'Operation Phoenix';
+  document.title = name;
+  document.getElementById('app-logo').textContent = '🔥 ' + name;
+  document.getElementById('setup-title-text').textContent = name;
+
+  // Quote — picked once per login/session, refreshes on every new page load
+  const quoteBanner = document.getElementById('quote-banner');
+  const quoteDisplay = document.getElementById('quote-display');
+  quoteDisplay.innerHTML = `<em>${sessionQuote}</em>`;
+  quoteBanner.style.display = 'flex';
+
+  const start = new Date(state.startDate);
+  const month = monthsElapsed(start);
+  const wInM  = weekInMonth(start);
+  const phase = getPhase(month);
+  const isW4  = wInM === 4;
+
+  document.getElementById('week4-pill').style.display = isW4 ? 'inline' : 'none';
+  document.getElementById('week4-alert').style.display = isW4 ? 'block' : 'none';
+  document.getElementById('week4-checkin-alert').style.display = isW4 ? 'block' : 'none';
+
+  const studyDays = Object.values(state.logs).filter(l=>l.hours>0).length;
+  const totalHrs  = Object.values(state.logs).reduce((a,l)=>a+(l.hours||0),0);
+  const avgHrs    = studyDays ? (totalHrs/studyDays).toFixed(1) : 0;
+  document.getElementById('bn-month').textContent = 'M'+month;
+  document.getElementById('bn-week').textContent  = 'W'+wInM;
+  document.getElementById('bn-days').textContent  = studyDays;
+  document.getElementById('bn-avg').textContent   = avgHrs+'h';
+
+  renderToday(TARGET);
+  renderWeekBars(TARGET);
+  renderDonut();
+  renderMockLineChart();
+  renderErrFreq();
+  renderTopicCoverage();
+  renderMockList();
+  renderErrList();
+  applyDashView();
+  renderMockSubjectSelect();
+  renderErrCatSelect();
+  renderSubjectChips();
+  prefillCheckin();
+}
+
+// ─── Today ─────────────────────────────────────────────────────────────────
+function renderToday(TARGET) {
+  TARGET = TARGET || state.dailyTarget || 6;
+  const key = todayKey();
+  const log = state.logs[key];
+  const el = document.getElementById('today-content');
+  const ringWrap = document.getElementById('today-ring-wrap');
+
+  if (log) {
+    const hrs = log.hours;
+    const rem = TARGET - hrs;
+    const pct = Math.min(100, Math.round((hrs/TARGET)*100));
+    el.innerHTML = `
+      <div class="today-row">
+        <span class="big-num">${hrs}h</span>
+        <span class="today-meta">studied · ${(log.subjects||[]).join(', ')||'—'}</span>
+      </div>
+      ${rem > 0
+        ? `<div class="gap-label">${rem.toFixed(1)}h to go to hit ${TARGET}h target</div>`
+        : `<div class="hit-label">✓ Daily target hit! Great work.</div>`}
+      ${log.topics ? `<div class="topics-text">Topics: ${log.topics}</div>` : ''}
+    `;
+    // Progress bar
+    const barColor = pct >= 100 ? '#4ade80' : pct >= 60 ? '#f97316' : '#fbbf24';
+    ringWrap.innerHTML = `
+      <div style="margin-top:12px;">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:5px;">
+          <span>Progress to daily target</span><span style="color:${barColor};font-weight:600">${pct}%</span>
+        </div>
+        <div style="height:8px;background:var(--border2);border-radius:4px;overflow:hidden;">
+          <div style="height:100%;width:${pct}%;background:${barColor};border-radius:4px;transition:width 0.4s;"></div>
+        </div>
+      </div>
+    `;
+  } else {
+    el.innerHTML = `<div class="empty">No check-in yet — <button class="inline-btn" onclick="switchTabDirect('checkin')">log today</button></div>`;
+    ringWrap.innerHTML = '';
+  }
+}
+
+// ─── 7-Day Bar Chart ─────────────────────────────────────────────────────────
+function renderWeekBars(TARGET) {
+  TARGET = TARGET || state.dailyTarget || 6;
+  const container = document.getElementById('week-bars');
+  container.innerHTML = '';
+  let totalHrs7 = 0, daysStudied7 = 0, daysHit7 = 0;
+
+  const dayNames = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const key = d.toISOString().slice(0,10);
+    const hrs = state.logs[key]?.hours || 0;
+    const subjects = state.logs[key]?.subjects || [];
+    const topics = state.logs[key]?.topics || '';
+    totalHrs7 += hrs;
+    if (hrs > 0) daysStudied7++;
+    if (hrs >= TARGET) daysHit7++;
+
+    const pctH = Math.min(1, hrs / TARGET);
+    const barPx = Math.max(4, Math.round(pctH * 90));
+    const color = hrs >= TARGET ? '#4ade80' : hrs > 0 ? '#f97316' : null;
+    const dayLabel = dayNames[d.getDay()];
+    const dateStr = d.toISOString().slice(5,10);
+    const isToday = i === 0;
+
+    const col = document.createElement('div');
+    col.className = 'week-bar-col';
+    col.style.position = 'relative';
+
+    // Tooltip
+    const tip = document.createElement('div');
+    tip.className = 'day-tooltip';
+    tip.innerHTML = `
+      <div class="tooltip-row"><span style="color:var(--muted)">${dateStr}${isToday?' (today)':''}</span></div>
+      <div class="tooltip-row"><span style="color:var(--muted)">Hours</span><span style="font-weight:700;color:${color||'var(--muted)'}">${hrs}h</span></div>
+      <div class="tooltip-row"><span style="color:var(--muted)">Target</span><span>${TARGET}h</span></div>
+      ${subjects.length ? `<div class="tooltip-row"><span style="color:var(--muted)">Subjects</span><span>${subjects.join(', ')}</span></div>` : ''}
+      ${topics ? `<div class="tooltip-row" style="flex-direction:column"><span style="color:var(--muted);margin-bottom:2px">Topics</span><span style="font-size:10px">${topics.slice(0,60)}${topics.length>60?'…':''}</span></div>` : ''}
+    `;
+    col.appendChild(tip);
+
+    const bar = document.createElement('div');
+    bar.className = 'week-bar-inner' + (hrs===0 ? ' empty-bar' : '');
+    if (color) bar.style.background = color;
+    bar.style.height = barPx + 'px';
+    bar.style.opacity = isToday ? '1' : '0.75';
+    if (isToday) bar.style.outline = '2px solid var(--orange)';
+
+    if (hrs > 0) {
+      const hrsLabel = document.createElement('div');
+      hrsLabel.className = 'week-bar-hrs';
+      hrsLabel.style.color = color || 'var(--muted)';
+      hrsLabel.textContent = hrs + 'h';
+      col.appendChild(hrsLabel);
+    }
+
+    const lbl = document.createElement('div');
+    lbl.className = 'week-bar-label';
+    lbl.style.color = isToday ? 'var(--orange)' : 'var(--muted)';
+    if (isToday) lbl.style.fontWeight = '700';
+    lbl.textContent = dayLabel;
+
+    col.appendChild(bar);
+    col.appendChild(lbl);
+
+    // Toggle tooltip on click
+    col.addEventListener('click', () => {
+      const wasShown = tip.classList.contains('show');
+      document.querySelectorAll('.day-tooltip.show').forEach(t=>t.classList.remove('show'));
+      if (!wasShown) tip.classList.add('show');
+    });
+
+    container.appendChild(col);
+  }
+
+  // Summary pills
+  const pillEl = document.getElementById('week-summary-pills');
+  const avg7 = daysStudied7 ? (totalHrs7/daysStudied7).toFixed(1) : 0;
+  pillEl.innerHTML = `
+    <div class="week-stat-pill"><div class="week-stat-val">${totalHrs7.toFixed(1)}h</div><div class="week-stat-lbl">Total this week</div></div>
+    <div class="week-stat-pill"><div class="week-stat-val">${avg7}h</div><div class="week-stat-lbl">Daily avg</div></div>
+    <div class="week-stat-pill"><div class="week-stat-val" style="color:${daysStudied7>=5?'var(--green)':'var(--yellow)'}">${daysStudied7}/7</div><div class="week-stat-lbl">Days active</div></div>
+    <div class="week-stat-pill"><div class="week-stat-val" style="color:${daysHit7>=4?'var(--green)':'var(--orange)'}">${daysHit7}</div><div class="week-stat-lbl">Target hits</div></div>
+  `;
+}
+
+// ─── Donut Chart (subject breakdown — uses actual per-subject hours) ──────────
+function renderDonut() {
+  const subjectHrs = {};
+  Object.values(state.logs).forEach(l => {
+    // Use precise per-subject hours if recorded
+    if (l.subjectHours && Object.keys(l.subjectHours).length) {
+      Object.entries(l.subjectHours).forEach(([s, h]) => {
+        if (h > 0) subjectHrs[s] = (subjectHrs[s] || 0) + h;
+      });
+    } else {
+      // Fallback: equal split across checked subjects (legacy logs)
+      const subs = l.subjects || [];
+      if (subs.length && l.hours) {
+        const share = l.hours / subs.length;
+        subs.forEach(s => { subjectHrs[s] = (subjectHrs[s] || 0) + share; });
+      }
+    }
+  });
+  const svg = document.getElementById('donut-svg');
+  const legend = document.getElementById('donut-legend');
+  if (!Object.keys(subjectHrs).length) {
+    svg.innerHTML = `<circle cx="55" cy="55" r="36" fill="none" stroke="var(--border2)" stroke-width="18"/>`;
+    legend.innerHTML = '<div style="font-size:12px;color:var(--muted)">Log daily check-ins to see subject breakdown</div>';
+    return;
+  }
+
+  const colors = ['#f97316','#818cf8','#4ade80','#38bdf8','#fbbf24','#f87171','#a78bfa'];
+  const entries = Object.entries(subjectHrs).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  const total = entries.reduce((s,[,v])=>s+v,0);
+  const cx=55, cy=55, r=36, iR=22;
+  let angle = -Math.PI/2;
+  let paths = '';
+  entries.forEach(([name,hrs],i) => {
+    const frac = hrs/total;
+    const a1=angle, a2=angle+frac*2*Math.PI;
+    const x1=cx+r*Math.cos(a1), y1=cy+r*Math.sin(a1);
+    const x2=cx+r*Math.cos(a2), y2=cy+r*Math.sin(a2);
+    const ix1=cx+iR*Math.cos(a1), iy1=cy+iR*Math.sin(a1);
+    const ix2=cx+iR*Math.cos(a2), iy2=cy+iR*Math.sin(a2);
+    const large = frac>0.5?1:0;
+    paths += `<path d="M${ix1},${iy1} L${x1},${y1} A${r},${r} 0 ${large},1 ${x2},${y2} L${ix2},${iy2} A${iR},${iR} 0 ${large},0 ${ix1},${iy1}Z" fill="${colors[i%colors.length]}" opacity="0.9"/>`;
+    angle = a2;
+  });
+  svg.innerHTML = paths;
+
+  legend.innerHTML = entries.map(([name,hrs],i) => `
+    <div class="legend-row">
+      <div class="legend-dot" style="background:${colors[i%colors.length]}"></div>
+      <span class="legend-name">${name}</span>
+      <span class="legend-val">${hrs.toFixed(1)}h</span>
+      <span class="legend-pct">${Math.round(hrs/total*100)}%</span>
+    </div>
+  `).join('');
+}
+
+// ─── Mock Line Chart ──────────────────────────────────────────────────────────
+function renderMockLineChart() {
+  const el = document.getElementById('mock-line-chart');
+  if (!state.mocks.length) { el.innerHTML = '<div class="empty">No mocks logged yet</div>'; return; }
+
+  const recent = [...state.mocks].sort((a,b)=>a.date.localeCompare(b.date)).slice(-10);
+  const scores = recent.map(m=>Math.round((m.score/m.total)*100));
+  const W=300, H=80, PAD=16;
+  const minS = Math.min(...scores, 0);
+  const maxS = Math.max(...scores, 100);
+  const xStep = (W-PAD*2) / Math.max(scores.length-1,1);
+
+  const points = scores.map((s,i) => {
+    const x = PAD + i*xStep;
+    const y = H-PAD - ((s-minS)/(maxS-minS||1))*(H-PAD*2);
+    return [x,y,s,recent[i]];
+  });
+
+  // Grid lines
+  let gridLines = '';
+  [25,50,75,100].forEach(g => {
+    const y = H-PAD - ((g-minS)/(maxS-minS||1))*(H-PAD*2);
+    if (y>=0 && y<=H) gridLines += `<line x1="${PAD}" y1="${y}" x2="${W-PAD}" y2="${y}" stroke="var(--border)" stroke-width="1"/>
+      <text x="${PAD-2}" y="${y+3}" fill="var(--muted)" font-size="8" text-anchor="end">${g}%</text>`;
+  });
+
+  // Line path
+  const linePath = 'M'+points.map(([x,y])=>`${x},${y}`).join(' L');
+  // Area fill
+  const areaPath = `M${points[0][0]},${H-PAD} `+points.map(([x,y])=>`L${x},${y}`).join(' ')+` L${points[points.length-1][0]},${H-PAD} Z`;
+
+  // Dots
+  let dots = '';
+  points.forEach(([x,y,s,m]) => {
+    const c = s>=70?'#4ade80':s>=50?'#fbbf24':'#f87171';
+    dots += `<circle cx="${x}" cy="${y}" r="4" fill="${c}" stroke="var(--bg)" stroke-width="2"/>`;
+  });
+
+  // Subject labels
+  let labels = '';
+  if (scores.length <= 6) {
+    points.forEach(([x,y,s,m]) => {
+      labels += `<text x="${x}" y="${H-2}" fill="var(--muted)" font-size="8" text-anchor="middle">${(m.subject||'').slice(0,3)}</text>`;
+    });
+  }
+
+  el.innerHTML = `
+    <svg width="100%" viewBox="0 0 ${W} ${H}" style="overflow:visible">
+      <defs>
+        <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="var(--orange)" stop-opacity="0.3"/>
+          <stop offset="100%" stop-color="var(--orange)" stop-opacity="0.02"/>
+        </linearGradient>
+      </defs>
+      ${gridLines}
+      <path d="${areaPath}" fill="url(#areaGrad)"/>
+      <path d="${linePath}" fill="none" stroke="var(--orange)" stroke-width="2" stroke-linejoin="round"/>
+      ${dots}
+      ${labels}
+    </svg>
+    <div class="latest-mock" style="margin-top:6px">
+      Latest: <strong>${recent[recent.length-1].subject}</strong> — 
+      ${fmtScore(recent[recent.length-1].score)}/${fmtScore(recent[recent.length-1].total)} 
+      <span style="color:${scores[scores.length-1]>=70?'#4ade80':scores[scores.length-1]>=50?'#fbbf24':'#f87171'}">(${scores[scores.length-1]}%)</span>
+      · Avg: <strong>${Math.round(scores.reduce((a,b)=>a+b,0)/scores.length)}%</strong>
+    </div>
+  `;
+}
+
+// ─── Error Frequency ─────────────────────────────────────────────────────────
+function renderErrFreq() {
+  const el = document.getElementById('err-freq');
+  if (!state.errors.length) { el.innerHTML = '<div class="empty">No errors logged yet</div>'; return; }
+  const freq = {};
+  state.errors.forEach(e => { freq[e.category]=(freq[e.category]||0)+1; });
+  const sorted = Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const total = state.errors.length;
+  el.innerHTML = sorted.map(([cat,count])=>`
+    <div class="err-row">
+      <span class="err-cat-label">${cat}</span>
+      <div class="err-bar-wrap"><div class="err-bar-fill" style="width:${(count/total)*100}%"></div></div>
+      <span class="err-count">${count}</span>
+    </div>
+  `).join('');
+}
+
+// ─── Topic Coverage Analysis ──────────────────────────────────────────────────
+function renderTopicCoverage() {
+  const el = document.getElementById('topic-coverage');
+  const freq = {};
+  // Gather from logs
+  Object.values(state.logs).forEach(l => {
+    if (l.topics) {
+      l.topics.split(/[,،\n]+/).map(t=>t.trim()).filter(Boolean).forEach(t => {
+        freq[t]=(freq[t]||0)+1;
+      });
+    }
+    (l.topicTags||[]).forEach(t => { freq[t]=(freq[t]||0)+1; });
+  });
+  // Also from global topicTags list
+  (state.topicTags||[]).forEach(t => { freq[t]=(freq[t]||0)+1; });
+
+  if (!Object.keys(freq).length) {
+    el.innerHTML = '<div class="empty" style="font-size:12px">Topics you enter in Daily Log will appear here as data analysis</div>';
+    return;
+  }
+
+  const sorted = Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  const maxV = sorted[0][1];
+  el.innerHTML = sorted.map(([t,c])=>`
+    <div class="topic-heatrow">
+      <span class="topic-name">${t}</span>
+      <div class="topic-bar-wrap"><div class="topic-bar-fill" style="width:${(c/maxV)*100}%"></div></div>
+      <span class="topic-count">${c}×</span>
+    </div>
+  `).join('');
+}
+
+// ─── Mock & Error List ────────────────────────────────────────────────────────
+function fmtScore(n) {
+  return Number.isInteger(n) ? String(n) : String(Math.round(n * 100) / 100);
+}
+
+function renderMockList() {
+  const el = document.getElementById('mock-list');
+  // Backfill IDs for mocks saved before edit/delete existed
+  let needsSave = false;
+  state.mocks.forEach(m => { if (!m.id) { m.id = 'mock_' + Date.now() + '_' + Math.random().toString(36).slice(2,7); needsSave = true; } });
+  if (needsSave) saveState();
+
+  if (!state.mocks.length) { el.innerHTML = '<div class="empty">No mocks yet</div>'; return; }
+  el.innerHTML = state.mocks.slice(0,12).map(m => {
+    const pct=Math.round((m.score/m.total)*100);
+    const color=pct>=70?'#4ade80':pct>=50?'#fbbf24':'#f87171';
+    return `<div class="mock-row">
+      <div><span class="mock-subject">${m.subject}</span><span class="mock-date">${m.date}</span></div>
+      <div class="mock-score-wrap">
+        <span style="color:${color};font-weight:600">${fmtScore(m.score)}/${fmtScore(m.total)}</span>
+        <span class="mock-pct">${pct}%</span>
+        <button class="inline-btn" style="text-decoration:none;margin-left:6px;" onclick="editMock('${m.id}')" title="Edit">✏️</button>
+        <button class="inline-btn" style="text-decoration:none;color:#f87171;" onclick="deleteMock('${m.id}')" title="Delete">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderErrList() {
+  const el = document.getElementById('err-list');
+  document.getElementById('err-total').textContent = state.errors.length + ' total';
+  if (!state.errors.length) { el.innerHTML = '<div class="empty">No errors yet</div>'; return; }
+  el.innerHTML = state.errors.slice(0,15).map(e=>`
+    <div class="err-entry">
+      <div class="err-top"><span class="err-badge">${e.category}</span><span class="err-date">${e.date}</span></div>
+      <div class="err-topic">${e.topic}</div>
+      ${e.note?`<div class="err-note">${e.note}</div>`:''}
+    </div>
+  `).join('');
+}
+
+// ─── Study / Other log-mode toggle ────────────────────────────────────────────
+function setCiLogMode(mode) {
+  ciLogMode = mode;
+  document.getElementById('ci-study-card').style.display = mode === 'study' ? 'block' : 'none';
+  document.getElementById('ci-other-card').style.display = mode === 'other' ? 'block' : 'none';
+  document.getElementById('ci-mode-study-btn').style.borderColor = mode === 'study' ? 'var(--orange)' : '';
+  document.getElementById('ci-mode-study-btn').style.color = mode === 'study' ? 'var(--orange)' : '';
+  document.getElementById('ci-mode-other-btn').style.borderColor = mode === 'other' ? 'var(--orange)' : '';
+  document.getElementById('ci-mode-other-btn').style.color = mode === 'other' ? 'var(--orange)' : '';
+  if (mode === 'other') renderOtherCatChips();
+}
+
+// ─── Other-activity chips + per-category hour rows ────────────────────────────
+function renderOtherCatChips() {
+  const el = document.getElementById('other-cat-chips');
+  el.innerHTML = allOtherCats().map(c=>`
+    <button class="chip ${ciOtherCats.includes(c)?'on':''}" onclick="toggleOtherCat('${c}')">${c}</button>
+  `).join('');
+  renderOtherHourRows();
+}
+
+function toggleOtherCat(c) {
+  if (ciOtherCats.includes(c)) {
+    ciOtherCats = ciOtherCats.filter(x=>x!==c);
+    delete ciOtherCatHours[c];
+  } else {
+    ciOtherCats.push(c);
+  }
+  renderOtherCatChips();
+}
+
+function renderOtherHourRows() {
+  const el = document.getElementById('other-hours-rows');
+  if (!el) return;
+  if (!ciOtherCats.length) {
+    el.innerHTML = '<div style="font-size:12px;color:var(--muted);">Select activities above to log time.</div>';
+    document.getElementById('other-hours-note').textContent = '';
+    return;
+  }
+  el.innerHTML = ciOtherCats.map(c => {
+    const val = ciOtherCatHours[c] || '';
+    return `<div class="subj-hour-row">
+      <span class="subj-hour-label">${c}</span>
+      <input class="subj-hour-input" type="number" min="0" max="24" step="0.25"
+        placeholder="0" value="${val}"
+        oninput="ciOtherCatHours['${c}']=parseFloat(this.value)||0;updateOtherHoursTotal()">
+      <span class="subj-hour-unit">hrs</span>
+    </div>`;
+  }).join('');
+  updateOtherHoursTotal();
+}
+
+function updateOtherHoursTotal() {
+  const total = Object.values(ciOtherCatHours).reduce((a,b)=>a+b,0);
+  const noteEl = document.getElementById('other-hours-note');
+  if (!noteEl) return;
+  noteEl.textContent = total > 0 ? `Total: ${total}h logged` : '';
+}
+
+function saveOtherCheckin() {
+  const key = ciEditingDate || todayKey();
+  const cleanHours = {};
+  ciOtherCats.forEach(c => { if (ciOtherCatHours[c] > 0) cleanHours[c] = ciOtherCatHours[c]; });
+  const totalOther = Object.values(cleanHours).reduce((a,b)=>a+b,0);
+  if (!totalOther) { toast('Log at least one activity with hours'); return; }
+
+  if (!state.logs[key]) state.logs[key] = { hours: 0, topics: '', subjects: [], topicTags: [], subjectHours: {} };
+  state.logs[key].otherHours = totalOther;
+  state.logs[key].otherActivities = { ...cleanHours };
+  state.logs[key].otherNotes = document.getElementById('ci-other-notes').value.trim();
+
+  saveState();
+  render();
+  toast(key === todayKey() ? '✓ Today\'s other-activity log saved' : `✓ Log saved for ${key}`);
+}
+
+// ─── Subject chips + per-subject hour rows ────────────────────────────────────
+function renderSubjectChips() {
+  const el = document.getElementById('subject-chips');
+  el.innerHTML = allSubjects().map(s=>`
+    <button class="chip ${ciSubjects.includes(s)?'on':''}" onclick="toggleSubject('${s}')">${s}</button>
+  `).join('');
+  renderSubjectHourRows();
+}
+
+function renderSubjectHourRows() {
+  const el = document.getElementById('subject-hours-rows');
+  if (!el) return;
+  const subs = ciSubjects;
+  if (!subs.length) {
+    el.innerHTML = '<div style="font-size:12px;color:var(--muted);">Select subjects above to log time per subject.</div>';
+    document.getElementById('subj-hours-note').textContent = '';
+    return;
+  }
+  el.innerHTML = subs.map(s => {
+    const val = ciSubjectHours[s] || '';
+    return `<div class="subj-hour-row">
+      <span class="subj-hour-label">${s}</span>
+      <input class="subj-hour-input" type="number" min="0" max="24" step="0.25"
+        placeholder="0" value="${val}"
+        oninput="ciSubjectHours['${s}']=parseFloat(this.value)||0;updateSubjHoursTotal()">
+      <span class="subj-hour-unit">hrs</span>
+    </div>`;
+  }).join('');
+  updateSubjHoursTotal();
+}
+
+function updateSubjHoursTotal() {
+  const total = Object.values(ciSubjectHours).reduce((a,b)=>a+b,0);
+  const noteEl = document.getElementById('subj-hours-note');
+  if (!noteEl) return;
+  if (total > 0) {
+    const mainHrs = parseFloat(document.getElementById('ci-hours').value) || 0;
+    const diff = Math.abs(mainHrs - total);
+    if (mainHrs > 0 && diff > 0.26) {
+      noteEl.textContent = `Per-subject total: ${total.toFixed(2)}h (differs from total hours by ${diff.toFixed(2)}h)`;
+      noteEl.style.color = 'var(--yellow)';
+    } else {
+      noteEl.textContent = `Per-subject total: ${total.toFixed(2)}h ✓`;
+      noteEl.style.color = 'var(--green)';
+    }
+  } else {
+    noteEl.textContent = '';
+  }
+}
+
+function toggleSubject(s) {
+  if (ciSubjects.includes(s)) {
+    ciSubjects = ciSubjects.filter(x=>x!==s);
+    delete ciSubjectHours[s];
+  } else {
+    ciSubjects.push(s);
+  }
+  renderSubjectChips();
+}
+
+// ─── Mock/Error selects ───────────────────────────────────────────────────────
+function renderMockSubjectSelect() {
+  const sel = document.getElementById('mk-subject');
+  if (!sel) return;
+  const cur = sel.value;
+  sel.innerHTML = allSubjects().map(s=>`<option${s===cur?' selected':''}>${s}</option>`).join('');
+}
+function renderErrCatSelect() {
+  const sel = document.getElementById('err-cat');
+  if (!sel) return;
+  const cur = sel.value;
+  sel.innerHTML = allCats().map(c=>`<option${c===cur?' selected':''}>${c}</option>`).join('');
+}
+
+// ─── Topic tags (Daily Log) ───────────────────────────────────────────────────
+function addTopicTag() {
+  const inp = document.getElementById('ci-topic-input');
+  const v = inp.value.trim();
+  if (!v) return;
+  if (!ciTopicTags.includes(v)) ciTopicTags.push(v);
+  inp.value = '';
+  renderTopicTagChips();
+}
+function renderTopicTagChips() {
+  const el = document.getElementById('ci-topic-tags');
+  el.innerHTML = ciTopicTags.map((t,i)=>`
+    <span class="chip on" style="display:inline-flex;align-items:center;gap:6px">${t}
+      <button onclick="removeTopicTag(${i})" style="background:none;border:none;color:inherit;cursor:pointer;font-size:14px;padding:0;line-height:1">✕</button>
+    </span>
+  `).join('');
+}
+function removeTopicTag(i) { ciTopicTags.splice(i,1); renderTopicTagChips(); }
+
+function useManualErrorTopic() {
+  const v = document.getElementById('err-topic-manual').value.trim();
+  if (!v) return;
+  document.getElementById('err-topic').value = v;
+  document.getElementById('err-topic-manual').value = '';
+}
+
+// ─── Prefill checkin (date-aware) ────────────────────────────────────────────
+function prefillCheckin() {
+  const key = ciEditingDate || todayKey();
+  // Set date picker and label
+  const dp = document.getElementById('ci-date-picker');
+  if (dp) dp.value = key;
+  const lbl = document.getElementById('checkin-date-label');
+  if (lbl) lbl.textContent = key === todayKey() ? "Today's Log" : `Editing: ${key}`;
+  document.getElementById('today-label').textContent = key === todayKey() ? todayKey() : key;
+  const lblOther = document.getElementById('today-label-other');
+  if (lblOther) lblOther.textContent = key === todayKey() ? todayKey() : key;
+
+  const log = state.logs[key];
+  if (log) {
+    document.getElementById('ci-hours').value = log.hours || '';
+    document.getElementById('ci-topics').value = log.topics || '';
+    ciSubjects = log.subjects || [];
+    ciTopicTags = log.topicTags || [];
+    ciSubjectHours = log.subjectHours ? {...log.subjectHours} : {};
+    document.getElementById('ci-btn').textContent = 'Update Log';
+
+    ciOtherCats = log.otherActivities ? Object.keys(log.otherActivities) : [];
+    ciOtherCatHours = log.otherActivities ? {...log.otherActivities} : {};
+    document.getElementById('ci-other-notes').value = log.otherNotes || '';
+    document.getElementById('ci-other-btn').textContent = log.otherHours ? 'Update Log' : 'Save Log';
+  } else {
+    document.getElementById('ci-hours').value = '';
+    document.getElementById('ci-topics').value = '';
+    ciSubjects = [];
+    ciTopicTags = [];
+    ciSubjectHours = {};
+    document.getElementById('ci-btn').textContent = 'Save Log';
+
+    ciOtherCats = [];
+    ciOtherCatHours = {};
+    document.getElementById('ci-other-notes').value = '';
+    document.getElementById('ci-other-btn').textContent = 'Save Log';
+  }
+  renderSubjectChips();
+  renderTopicTagChips();
+  renderOtherCatChips();
+  setCiLogMode(ciLogMode);
+}
+
+function loadDayForEdit() {
+  const dp = document.getElementById('ci-date-picker');
+  ciEditingDate = dp.value || null;
+  prefillCheckin();
+}
+
+function jumpToToday() {
+  ciEditingDate = null;
+  const dp = document.getElementById('ci-date-picker');
+  if (dp) dp.value = todayKey();
+  prefillCheckin();
+}
+
+// ─── Save handlers ────────────────────────────────────────────────────────────
+function saveCheckin() {
+  const hrs = parseFloat(document.getElementById('ci-hours').value);
+  if (!hrs || hrs < 0) { toast('Enter valid hours'); return; }
+  const topics = document.getElementById('ci-topics').value.trim();
+  const key = ciEditingDate || todayKey();
+
+  // Merge topic tags into global list
+  ciTopicTags.forEach(t => {
+    if (!(state.topicTags||[]).includes(t)) {
+      if (!state.topicTags) state.topicTags = [];
+      state.topicTags.push(t);
+    }
+  });
+
+  // Clean subjectHours — only keep subjects that are selected and have hours
+  const cleanSubjHours = {};
+  ciSubjects.forEach(s => {
+    if (ciSubjectHours[s] > 0) cleanSubjHours[s] = ciSubjectHours[s];
+  });
+
+  state.logs[key] = { hours: hrs, topics, subjects: [...ciSubjects], topicTags: [...ciTopicTags], subjectHours: cleanSubjHours };
+  saveState();
+  render();
+  toast(key === todayKey() ? '✓ Today\'s log saved' : `✓ Log saved for ${key}`);
+}
+
+let mockEditingId = null;
+
+function saveMock() {
+  const score = parseFloat(document.getElementById('mk-score').value);
+  const total = parseFloat(document.getElementById('mk-total').value);
+  if (isNaN(score) || !total) { toast('Enter score and total'); return; }
+
+  if (mockEditingId) {
+    const m = state.mocks.find(x => x.id === mockEditingId);
+    if (m) {
+      m.subject = document.getElementById('mk-subject').value;
+      m.score = score;
+      m.total = total;
+      m.notes = document.getElementById('mk-notes').value.trim();
+    }
+    mockEditingId = null;
+  } else {
+    state.mocks.unshift({ id: 'mock_' + Date.now() + '_' + Math.random().toString(36).slice(2,7), date:todayKey(), subject:document.getElementById('mk-subject').value, score, total, notes:document.getElementById('mk-notes').value.trim() });
+  }
+
+  saveState();
+  document.getElementById('mk-score').value = '';
+  document.getElementById('mk-total').value = '40';
+  document.getElementById('mk-notes').value = '';
+  const btn = document.getElementById('mk-save-btn');
+  if (btn) btn.textContent = 'Log Score';
+  render();
+  toast(mockEditingId ? '✓ Mock score updated' : '✓ Mock score logged');
+}
+
+function editMock(id) {
+  const m = state.mocks.find(x => x.id === id);
+  if (!m) return;
+  mockEditingId = id;
+  document.getElementById('mk-subject').value = m.subject;
+  document.getElementById('mk-score').value = m.score;
+  document.getElementById('mk-total').value = m.total;
+  document.getElementById('mk-notes').value = m.notes || '';
+  const btn = document.getElementById('mk-save-btn');
+  if (btn) btn.textContent = 'Update Score';
+  document.getElementById('mk-score').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  toast('Editing mock — change values and tap Update');
+}
+
+function cancelEditMock() {
+  mockEditingId = null;
+  document.getElementById('mk-score').value = '';
+  document.getElementById('mk-total').value = '40';
+  document.getElementById('mk-notes').value = '';
+  const btn = document.getElementById('mk-save-btn');
+  if (btn) btn.textContent = 'Log Score';
+}
+
+function deleteMock(id) {
+  if (!confirm('Delete this mock score? This cannot be undone.')) return;
+  state.mocks = state.mocks.filter(x => x.id !== id);
+  if (mockEditingId === id) cancelEditMock();
+  saveState();
+  render();
+  toast('✓ Mock score deleted');
+}
+
+function saveError() {
+  const topic = document.getElementById('err-topic').value.trim();
+  if (!topic) { toast('Enter a topic'); return; }
+  state.errors.unshift({ date:todayKey(), category:document.getElementById('err-cat').value, topic, note:document.getElementById('err-note').value.trim() });
+  saveState();
+  document.getElementById('err-topic').value = '';
+  document.getElementById('err-note').value = '';
+  render();
+  toast('✓ Error logged');
+}
+
+// ─── Backup ───────────────────────────────────────────────────────────────────
+function exportData() {
+  const blob = new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url;
+  a.download=(state.trackerName||'phoenix').replace(/\s+/g,'-').toLowerCase()+'-backup-'+todayKey()+'.json';
+  a.click(); URL.revokeObjectURL(url);
+  toast('✓ Backup downloaded');
+}
+
+function restoreData(event) {
+  const file = event.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.startDate) { toast('Invalid backup file'); return; }
+      state = Object.assign({ trackerName:'Operation Phoenix', dailyTarget:6, customSubjects:[], customCats:[], customOtherCats:[], lostDayThreshold:3, quote:'', topicTags:[] }, data);
+      saveState(); sessionQuote = pickSessionQuote(); render(); toast('✓ Data restored');
+    } catch { toast('Failed to read backup file'); }
+  };
+  reader.readAsText(file); event.target.value='';
+}
+
+function renderBackupSummary() {
+  const el = document.getElementById('data-summary');
+  const studyDays = Object.values(state.logs).filter(l=>l.hours>0).length;
+  const totalHrs = Object.values(state.logs).reduce((a,l)=>a+(l.hours||0),0);
+  const otherDays = Object.values(state.logs).filter(l=>l.otherHours>0).length;
+  const totalOtherHrs = Object.values(state.logs).reduce((a,l)=>a+(l.otherHours||0),0);
+  el.innerHTML = `
+    Tracker: <strong>${state.trackerName||'—'}</strong><br>
+    Start date: <strong>${state.startDate||'—'}</strong><br>
+    Study days logged: <strong>${studyDays}</strong><br>
+    Total study hours: <strong>${totalHrs.toFixed(1)}h</strong><br>
+    Other-activity days logged: <strong>${otherDays}</strong><br>
+    Total other-activity hours: <strong>${totalOtherHrs.toFixed(1)}h</strong><br>
+    Mock scores saved: <strong>${state.mocks.length}</strong><br>
+    Errors logged: <strong>${state.errors.length}</strong>
+  `;
+}
+
+function resetAll() {
+  if (!confirm('This deletes ALL your data permanently.\n\nExport a backup first if you want to keep your data.')) return;
+  localStorage.removeItem('phoenix_data');
+  state = { startDate:null, trackerName:'Operation Phoenix', dailyTarget:6, customSubjects:[], customCats:[], customOtherCats:[], lostDayThreshold:3, quote:'', logs:{}, mocks:[], errors:[], topicTags:[] };
+  document.getElementById('app').style.display='none';
+  document.getElementById('setup').style.display='flex';
+  toast('Data cleared');
+}
+
+// ─── History Tab ─────────────────────────────────────────────────────────────
+let histCurrentDate = null;
+
+function initHistory() {
+  histCurrentDate = histCurrentDate || todayKey();
+  const dp = document.getElementById('hist-date-picker');
+  if (dp) dp.value = histCurrentDate;
+  renderHistoryDay(histCurrentDate);
+  renderAllDaysList();
+}
+
+function loadHistoryDay() {
+  const dp = document.getElementById('hist-date-picker');
+  histCurrentDate = dp.value || todayKey();
+  renderHistoryDay(histCurrentDate);
+}
+
+function histJumpToday() {
+  histCurrentDate = todayKey();
+  const dp = document.getElementById('hist-date-picker');
+  if (dp) dp.value = histCurrentDate;
+  renderHistoryDay(histCurrentDate);
+}
+
+function histNavDay(dir) {
+  const d = new Date(histCurrentDate || todayKey());
+  d.setDate(d.getDate() + dir);
+  histCurrentDate = d.toISOString().slice(0,10);
+  const dp = document.getElementById('hist-date-picker');
+  if (dp) dp.value = histCurrentDate;
+  renderHistoryDay(histCurrentDate);
+}
+
+function renderHistoryDay(key) {
+  const el = document.getElementById('hist-day-detail');
+  const log = state.logs[key];
+  const TARGET = state.dailyTarget || 6;
+
+  if (!log || (!log.hours && !log.otherHours)) {
+    el.innerHTML = `<div class="hist-no-log">No log entry for <strong>${key}</strong>. Pick another date or log this day via Daily Log.</div>`;
+    return;
+  }
+
+  const pct = Math.min(100, Math.round(((log.hours||0)/TARGET)*100));
+  const barColor = (log.hours||0) >= TARGET ? '#4ade80' : (log.hours||0) > 0 ? '#f97316' : '#64748b';
+
+  // Subject breakdown bars
+  const COLORS = ['#f97316','#818cf8','#4ade80','#38bdf8','#fbbf24','#f87171','#a78bfa'];
+  let subjBarsHtml = '';
+  const hasSubjHours = log.subjectHours && Object.keys(log.subjectHours).length > 0;
+  if (hasSubjHours) {
+    const entries = Object.entries(log.subjectHours).filter(([,h])=>h>0).sort((a,b)=>b[1]-a[1]);
+    const maxH = Math.max(...entries.map(([,h])=>h));
+    subjBarsHtml = `<div class="hist-subj-bars">${entries.map(([s,h],i)=>`
+      <div class="hist-subj-row">
+        <span class="hist-subj-name">${s}</span>
+        <div class="hist-subj-bar-wrap"><div class="hist-subj-bar-fill" style="width:${(h/maxH)*100}%;background:${COLORS[i%COLORS.length]}"></div></div>
+        <span class="hist-subj-val">${h}h</span>
+      </div>`).join('')}</div>`;
+  } else if (log.subjects && log.subjects.length) {
+    subjBarsHtml = `<div class="hist-stat-row">${log.subjects.map(s=>`<span class="hist-stat-pill">${s}</span>`).join('')}</div>`;
+  }
+
+  // Other-activity breakdown
+  let otherHtml = '';
+  if (log.otherActivities && Object.keys(log.otherActivities).length) {
+    const oEntries = Object.entries(log.otherActivities).filter(([,h])=>h>0).sort((a,b)=>b[1]-a[1]);
+    otherHtml = `
+      <div style="margin-top:10px;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:6px;">🌱 Other Activities — ${log.otherHours||0}h</div>
+      ${oEntries.map(([c,h])=>`<div style="display:flex;justify-content:space-between;font-size:13px;padding:3px 0;">
+        <span>${c}</span><span style="color:var(--blue);font-weight:600">${h}h</span></div>`).join('')}
+      ${log.otherNotes ? `<div class="hist-topics">📝 ${log.otherNotes}</div>` : ''}
+    `;
+  }
+
+  // Mocks on this day
+  const dayMocks = state.mocks.filter(m=>m.date===key);
+  const mocksHtml = dayMocks.length ? `
+    <div style="margin-top:10px;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:6px;">Mock Scores</div>
+    ${dayMocks.map(m=>{
+      const p=Math.round((m.score/m.total)*100);
+      const c=p>=70?'#4ade80':p>=50?'#fbbf24':'#f87171';
+      return `<div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0;border-bottom:1px solid var(--border);">
+        <span>${m.subject}</span><span style="color:${c};font-weight:600">${fmtScore(m.score)}/${fmtScore(m.total)} (${p}%)</span></div>`;
+    }).join('')}` : '';
+
+  // Errors on this day
+  const dayErrors = state.errors.filter(e=>e.date===key);
+  const errorsHtml = dayErrors.length ? `
+    <div style="margin-top:10px;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:6px;">Errors Logged</div>
+    ${dayErrors.map(e=>`<div style="font-size:12px;padding:4px 0;border-bottom:1px solid var(--border);">
+      <span style="font-size:10px;background:var(--border);border-radius:4px;padding:1px 6px;color:var(--sub);margin-right:6px;">${e.category}</span>${e.topic}
+      ${e.note?`<div style="font-size:11px;color:var(--muted);margin-top:2px;">${e.note}</div>`:''}
+    </div>`).join('')}` : '';
+
+  el.innerHTML = `
+    <div class="hist-day-card">
+      <div class="hist-day-header">
+        <span class="hist-day-date">${key}</span>
+        <span class="hist-day-hrs">${log.hours||0}h studied</span>
+      </div>
+      <!-- Progress bar -->
+      <div style="margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:4px;">
+          <span>vs ${TARGET}h target</span><span style="color:${barColor}">${pct}%</span>
+        </div>
+        <div style="height:7px;background:var(--border2);border-radius:4px;overflow:hidden;">
+          <div style="height:100%;width:${pct}%;background:${barColor};border-radius:4px;"></div>
+        </div>
+      </div>
+      ${subjBarsHtml}
+      ${log.topics ? `<div class="hist-topics">📝 ${log.topics}</div>` : ''}
+      ${log.topicTags && log.topicTags.length ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;">${log.topicTags.map(t=>`<span style="background:var(--border);border-radius:12px;padding:2px 8px;font-size:11px;color:var(--sub)">${t}</span>`).join('')}</div>` : ''}
+      ${otherHtml}
+      ${mocksHtml}
+      ${errorsHtml}
+      <button class="btn-secondary" style="margin-top:14px;width:100%;font-size:12px;" onclick="editDayFromHistory('${key}')">✏ Edit this day's log</button>
+    </div>
+  `;
+}
+
+function editDayFromHistory(key) {
+  ciEditingDate = key;
+  switchTabDirect('checkin');
+}
+
+function renderAllDaysList() {
+  const el = document.getElementById('hist-all-days');
+  const TARGET = state.dailyTarget || 6;
+  const keys = Object.keys(state.logs).filter(k=>state.logs[k].hours>0 || state.logs[k].otherHours>0).sort((a,b)=>b.localeCompare(a));
+  if (!keys.length) { el.innerHTML = '<div class="empty">No logged days yet.</div>'; return; }
+  el.innerHTML = keys.map(k=>{
+    const l = state.logs[k];
+    const hrs = l.hours || 0;
+    const pct = Math.min(1, hrs/TARGET);
+    const c = hrs>=TARGET?'#4ade80':hrs>0?'#f97316':'#475569';
+    const subj = (l.subjects||[]).join(', ') || (l.otherHours ? '🌱 ' + Object.keys(l.otherActivities||{}).join(', ') : '—');
+    return `<div class="all-days-row" onclick="histSelectDay('${k}')">
+      <span class="all-days-date">${k}</span>
+      <div class="all-days-bar-wrap"><div class="all-days-bar" style="width:${pct*100}%;background:${c}"></div></div>
+      <span class="all-days-hrs" style="color:${c}">${hrs}h${l.otherHours ? ' +'+l.otherHours+'h' : ''}</span>
+      <span class="all-days-subj">${subj}</span>
+    </div>`;
+  }).join('');
+}
+
+function histSelectDay(key) {
+  histCurrentDate = key;
+  const dp = document.getElementById('hist-date-picker');
+  if (dp) dp.value = key;
+  renderHistoryDay(key);
+  document.getElementById('hist-day-detail').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ─── Toast ────────────────────────────────────────────────────────────────────
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>el.classList.remove('show'),2200);
+}
+
+// Close tooltip on outside click
+document.addEventListener('click', e => {
+  if (!e.target.closest('.week-bar-col')) {
+    document.querySelectorAll('.day-tooltip.show').forEach(t=>t.classList.remove('show'));
+  }
+});
+</script>
+</body>
+</html>
