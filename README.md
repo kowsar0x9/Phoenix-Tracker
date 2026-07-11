@@ -88,7 +88,7 @@ Your data may be lost if you:
 
 > **Remember:** Browser Storage ≠ Cloud Storage.
 
-</details>
+<details>
 
 ## Who this is for
 
