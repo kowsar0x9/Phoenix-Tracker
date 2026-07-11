@@ -33,7 +33,8 @@ Open the [live link](https://kowsar0x9.github.io/Phoenix-Tracker/) in any browse
 2. Double-click it, or open it in any browser
 3. Bookmark it — your data stays saved in that browser going forward
 
-⚠️ IMPORTANT: Read this before using Phoenix Tracker | ব্যবহারের আগে অবশ্যই পড়ুন
+
+#⚠️ IMPORTANT: Read this before using Phoenix Tracker | ## ব্যবহারের আগে অবশ্যই পড়ুন
 
 ---
 
