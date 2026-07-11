@@ -4,7 +4,7 @@
 
 A free, single-file study tracker built for BCS and government bank job aspirants in Bangladesh. No installs, no accounts, no ads — just open it and start tracking.
 
-**[👉 Use it now (no download needed)](#)** ← *replace with your GitHub Pages link once live*
+**[👉 Use it now (no download needed)](#)** ← 
 
 ---
 
@@ -32,7 +32,7 @@ Open the [live link](#) in any browser (phone or desktop). That's it.
 1. Download `index.html` from this repo
 2. Double-click it, or open it in any browser
 3. Bookmark it — your data stays saved in that browser going forward
-
+****Things to be strictly Remember!**
 > ⚠️ Since data is stored per-browser (not in the cloud), clearing your browser data or switching devices/browsers will reset your tracker. Use the backup/restore feature (in Settings) regularly to be safe.
 
 ## Who this is for
