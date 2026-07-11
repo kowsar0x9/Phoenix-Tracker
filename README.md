@@ -26,7 +26,7 @@ Most study trackers are either too generic (built for any student, fit for none)
 ## How to use it
 
 **Option 1 — Instant (recommended):**
-Open the [live link](#) in any browser (phone or desktop). That's it.
+Open the [live link](https://kowsar0x9.github.io/Phoenix-Tracker/) in any browser (phone or desktop). That's it.
 
 **Option 2 — Download and run locally:**
 1. Download `index.html` from this repo
