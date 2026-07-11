@@ -32,7 +32,8 @@ Open the [live link](#) in any browser (phone or desktop). That's it.
 1. Download `index.html` from this repo
 2. Double-click it, or open it in any browser
 3. Bookmark it — your data stays saved in that browser going forward
-****Things to be strictly Remember!**
+
+##**Things to be strictly Remember!**
 > ⚠️ Since data is stored per-browser (not in the cloud), clearing your browser data or switching devices/browsers will reset your tracker. Use the backup/restore feature (in Settings) regularly to be safe.
 
 ## Who this is for
